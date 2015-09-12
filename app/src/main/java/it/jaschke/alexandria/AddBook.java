@@ -40,7 +40,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
 
     public AddBook(){
+
     }
+
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
