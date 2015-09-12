@@ -2,8 +2,11 @@ package it.jaschke.alexandria.services;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -44,6 +47,7 @@ public class BookService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.e(LOG_TAG, "onHandleIntent -> " + intent);
         if (intent != null) {
             final String action = intent.getAction();
             if (FETCH_BOOK.equals(action)) {
@@ -65,7 +69,17 @@ public class BookService extends IntentService {
             getContentResolver().delete(AlexandriaContract.BookEntry.buildBookUri(Long.parseLong(ean)), null, null);
         }
     }
-
+    /**
+     * isNetworkAvailable
+     * This method checks if the device is connected to the internet
+     * @return a boolean (true for network available, and null for network not available)
+     */
+    public Boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
     /**
      * Handle action fetchBook in the provided background thread with the provided
      * parameters.

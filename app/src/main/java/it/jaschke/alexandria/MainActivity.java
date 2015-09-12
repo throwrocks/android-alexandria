@@ -78,13 +78,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
         if (scanResult != null) {
-            Context context = this;
-            CharSequence text = scanResult.toString();
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-
+            Log.e(LOG_TAG, "onActivityResult -> " + scanResult.getContents());
+            // Set the barcode in the EditText input
             EditText editText = (EditText) findViewById(R.id.ean);
             editText.setText(scanResult.getContents());
         }

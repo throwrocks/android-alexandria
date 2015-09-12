@@ -27,6 +27,7 @@ import it.jaschke.alexandria.zxing.IntentIntegrator;
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
     private EditText ean;
+    private TextView addBookMessage;
     private final int LOADER_ID = 1;
     private View rootView;
     private final String EAN_CONTENT="eanContent";
@@ -58,6 +59,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         rootView = inflater.inflate(R.layout.fragment_add_book, container, false);
         ean = (EditText) rootView.findViewById(R.id.ean);
+        addBookMessage = (TextView) rootView.findViewById(R.id.addBookMessage);
 
         ean.addTextChangedListener(new TextWatcher() {
             @Override
@@ -81,8 +83,26 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     clearFields();
                     return;
                 }
+
+
+
+                BookService bookService = new BookService();
+                Boolean networkState = bookService.isNetworkAvailable(getActivity());
+                if(!networkState){
+                    String text = "Can't find book at the moment because you are not connected " +
+                            "to a network. Please try again later.";
+                    addBookMessage.setVisibility(View.VISIBLE);
+                    addBookMessage.setText(text);
+                    return;
+                } else {
+                    addBookMessage.setVisibility(View.INVISIBLE);
+                }
+
+
+                Log.e(LOG_TAG, "afterTextChanged -> " + true);
                 //Once we have an ISBN, start a book intent
                 Intent bookIntent = new Intent(getActivity(), BookService.class);
+
                 bookIntent.putExtra(BookService.EAN, ean);
                 bookIntent.setAction(BookService.FETCH_BOOK);
                 getActivity().startService(bookIntent);
