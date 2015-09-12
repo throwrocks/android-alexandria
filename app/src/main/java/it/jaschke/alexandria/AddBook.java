@@ -18,9 +18,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
-import it.jaschke.alexandria.services.DownloadImage;
 import it.jaschke.alexandria.zxing.IntentIntegrator;
 
 
@@ -199,8 +200,14 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
         if(Patterns.WEB_URL.matcher(imgUrl).matches()){
-            new DownloadImage((ImageView) rootView.findViewById(R.id.bookCover)).execute(imgUrl);
-            rootView.findViewById(R.id.bookCover).setVisibility(View.VISIBLE);
+
+            ImageView bookCover = (ImageView) rootView.findViewById(R.id.bookCover);
+            bookCover.setVisibility(View.VISIBLE);
+            Picasso.with(this.getActivity()).load(imgUrl).into(bookCover);
+
+            // No longer used as images are now handled by Picasso
+            //new DownloadImage((ImageView) rootView.findViewById(R.id.bookCover)).execute(imgUrl);
+            //rootView.findViewById(R.id.bookCover).setVisibility(View.VISIBLE);
         }
 
         String categories = data.getString(data.getColumnIndex(AlexandriaContract.CategoryEntry.CATEGORY));

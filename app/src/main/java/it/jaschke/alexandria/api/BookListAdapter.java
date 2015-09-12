@@ -10,9 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import it.jaschke.alexandria.R;
 import it.jaschke.alexandria.data.AlexandriaContract;
-import it.jaschke.alexandria.services.DownloadImage;
 
 /**
  * Created by saj on 11/01/15.
@@ -42,7 +43,13 @@ public class BookListAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         String imgUrl = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
-        new DownloadImage(viewHolder.bookCover).execute(imgUrl);
+
+        // This doesn't work when there's no net work connection
+        //new DownloadImage(viewHolder.bookCover).execute(imgUrl);
+
+        // I implemented Picasso to cache the images so they display when offline
+        ImageView bookCover = viewHolder.bookCover;
+        Picasso.with(context).load(imgUrl).into(bookCover);
 
         String bookTitle = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         viewHolder.bookTitle.setText(bookTitle);

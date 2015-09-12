@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 /**
  * Created by saj on 11/01/15.
+ * 9/12/2015 Jose: This class is no longer used as images are now handled by Picasso
  */
 public class DownloadImage extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
