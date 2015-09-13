@@ -198,8 +198,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
         // I added this check to prevent a null pointer exception error that happens sometimes
-        // when trying to perform string operations on an empty value
-        if ( authors.length() > 0 ) {
+        // when trying to perform string operations on an a null value
+        Log.e(LOG_TAG, "onLoadFInished -> " + authors);
+        if ( authors != null ) {
             String[] authorsArr = authors.split(",");
             ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
             ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",", "\n"));
