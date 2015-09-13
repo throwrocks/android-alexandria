@@ -96,6 +96,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     addBookMessage.setText(text);
                     return;
                 } else {
+
                     addBookMessage.setVisibility(View.INVISIBLE);
                 }
 
@@ -121,7 +122,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 //functionality directly in this app.
                 // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
                 // are using an external app.
-                //when you're done, remove the toast below.
+                // when you're done, remove the toast below.
                     IntentIntegrator integrator = new IntentIntegrator(getActivity());
                     integrator.initiateScan();
                     Log.e(LOG_TAG, "onClick -> " + "finished");
@@ -130,11 +131,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         });
 
 
-
-
         rootView.findViewById(R.id.save_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String text = "The book was successfully added to your library!";
+                addBookMessage.setVisibility(View.VISIBLE);
+                addBookMessage.setText(text);
                 ean.setText("");
             }
         });
@@ -195,9 +197,13 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-        String[] authorsArr = authors.split(",");
-        ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
-        ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
+        // I added this check to prevent a null pointer exception error that happens sometimes
+        // when trying to perform string operations on an empty value
+        if ( authors.length() > 0 ) {
+            String[] authorsArr = authors.split(",");
+            ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
+            ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",", "\n"));
+        }
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
         if(Patterns.WEB_URL.matcher(imgUrl).matches()){
 

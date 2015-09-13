@@ -67,7 +67,7 @@ public class TestDb extends AndroidTestCase {
         values = getAuthorValues();
 
 
-        retEan = db.insert(AlexandriaContract.AuthorEntry.TABLE_NAME, null, values);
+        //retEan = db.insert(AlexandriaContract.AuthorEntry.TABLE_NAME, null, values);
 
         columns = new String[]{
                 AlexandriaContract.AuthorEntry._ID,
@@ -88,7 +88,7 @@ public class TestDb extends AndroidTestCase {
         // test category table
 
         values = getCategoryValues();
-        retEan = db.insert(AlexandriaContract.CategoryEntry.TABLE_NAME, null, values);
+        //retEan = db.insert(AlexandriaContract.CategoryEntry.TABLE_NAME, null, values);
 
         columns = new String[]{
                 AlexandriaContract.CategoryEntry._ID,
