@@ -44,13 +44,14 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        // Hide the keyboard if it was left open from the previous activity
         hideSoftKeyboard();
     }
 
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        Log.e(LOG_TAG, "onCreateView -> " + true);
         Bundle arguments = getArguments();
         if (arguments != null) {
             ean = arguments.getString(BookDetail.EAN_KEY);
@@ -102,7 +103,7 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
         ((TextView) rootView.findViewById(R.id.fullBookTitle)).setText(bookTitle);
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + bookTitle);
         Log.e(LOG_TAG, "onLoadFinished sharedIntent-> " + shareIntent);
@@ -156,12 +157,21 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
 
     }
 
+
     @Override
     public void onPause() {
-        super.onDestroyView();
+        super.onPause();
+
+        Log.e(LOG_TAG, "onPause-> " + true);
+        Log.e(LOG_TAG, "onPause IS_TABLE?-> " + MainActivity.IS_TABLET);
+
+        // There is a bug here that causes the screen to go blank on a second click
         if(MainActivity.IS_TABLET && rootView.findViewById(R.id.right_container)==null){
+            Log.e(LOG_TAG, "onPause popBackStack? -> " + true);
             getActivity().getSupportFragmentManager().popBackStack();
         }
+
+
     }
 
     /**

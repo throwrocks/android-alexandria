@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -15,7 +17,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -43,9 +44,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private static final String LOG_TAG = "MainActivity";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e(LOG_TAG, "onCreate -> " + true);
         IS_TABLET = isTablet();
         if(IS_TABLET){
             setContentView(R.layout.activity_main_tablet);
@@ -56,14 +59,21 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         messageReciever = new MessageReciever();
         IntentFilter filter = new IntentFilter(MESSAGE_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReciever,filter);
+        setUpNavigationDrawer();
 
+    }
+
+    /**
+     * setUpNavigationDrawer
+     */
+    private void setUpNavigationDrawer(){
         navigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         title = getTitle();
 
         // Set up the drawer.
         navigationDrawerFragment.setUp(R.id.navigation_drawer,
-                    (DrawerLayout) findViewById(R.id.drawer_layout));
+                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     /**
@@ -91,25 +101,44 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment nextFragment;
+        // Get the backstack count and set the backstack accordingly.
+        // We don't want to go back to previously opened books when the drawer is opened
+        // from a book detail and the user navigates to any of the other layouts.
+        // Our main view is the list, and you should always come back to it.
+        // Pressing back on the list will exit the app.
+        int backStackCount = fragmentManager.getBackStackEntryCount();
 
         switch (position){
             default:
             case 0:
+                for(int i = 0; i < backStackCount; ++i) {
+                    fragmentManager.popBackStack();
+                }
                 nextFragment = new ListOfBooks();
                 break;
             case 1:
+                for(int i = 1; i < backStackCount; ++i) {
+                    fragmentManager.popBackStack();
+                }
                 nextFragment = new AddBook();
                 break;
             case 2:
+                for(int i = 1; i < backStackCount; ++i) {
+                    fragmentManager.popBackStack();
+                }
                 nextFragment = new About();
                 break;
 
         }
 
+        Log.e(LOG_TAG, "onNavigationDrawer...Title -> " + title);
         fragmentManager.beginTransaction()
                 .replace(R.id.container, nextFragment)
                 .addToBackStack((String) title)
                 .commit();
+
+
+
     }
 
     public void setTitle(int titleId) {
@@ -117,10 +146,17 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
     public void restoreActionBar() {
+        Log.e(LOG_TAG, "restoreActionBar -> " + true);
+
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String drawerTitle = sp.getString(NavigationDrawerFragment.STATE_SELECTED_TITLE, title.toString());
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(title);
+        Log.e(LOG_TAG, "restoreActionBar Title -> " + drawerTitle);
+        actionBar.setTitle( drawerTitle );
     }
 
 
@@ -160,6 +196,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     @Override
     public void onItemSelected(String ean) {
+        Log.e(LOG_TAG, "onItemSelected -> " + ean);
+
         Bundle args = new Bundle();
         args.putString(BookDetail.EAN_KEY, ean);
 
@@ -186,9 +224,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         }
     }
 
-    public void goBack(View view){
+
+    /*public void goBack(View view){
         getSupportFragmentManager().popBackStack();
-    }
+    }*/
 
     private boolean isTablet() {
         return (getApplicationContext().getResources().getConfiguration().screenLayout
@@ -198,11 +237,22 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     @Override
     public void onBackPressed() {
+        Log.e(LOG_TAG, "onBackPressed-> " + true);
+
         if(getSupportFragmentManager().getBackStackEntryCount()<2){
+            Log.e(LOG_TAG, "onBackPressed <2?" + true);
             finish();
         }
+        // You can only go back to the list >D
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        sp.edit().putInt(NavigationDrawerFragment.STATE_SELECTED_POSITION, 0).apply();
+        sp.edit().putString(NavigationDrawerFragment.STATE_SELECTED_TITLE, NavigationDrawerFragment.drawerTitles[0]).apply();
+        setUpNavigationDrawer();
+        restoreActionBar();
         super.onBackPressed();
+
     }
+
 
 
 }
