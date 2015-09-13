@@ -113,6 +113,7 @@
             android:layout_height="fill_parent"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
+            android:background="#E0E0E0"
             >
 
             <ImageButton

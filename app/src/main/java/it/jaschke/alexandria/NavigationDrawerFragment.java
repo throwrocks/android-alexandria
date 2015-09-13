@@ -128,8 +128,6 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-
-
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
@@ -154,6 +152,11 @@ public class NavigationDrawerFragment extends Fragment {
         Log.e(LOG_TAG, "setUp -> " + true);
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
+
+        // Refresh the variables to set the drawer selection accordingly
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mCurrentSelectedPosition = sp.getInt(NavigationDrawerFragment.STATE_SELECTED_POSITION,0);
+        mCurrentSelectedTitle = sp.getString(NavigationDrawerFragment.STATE_SELECTED_TITLE, drawerTitles[0]);
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
@@ -213,7 +216,7 @@ public class NavigationDrawerFragment extends Fragment {
         Log.e(LOG_TAG, "setUp -> " + mCurrentSelectedTitle);
         // Always revert to list of books, since this our main view and the
         // once to which we always come back
-        mDrawerListView.setItemChecked(0, true);
+        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         // Defer code dependent on restoration of previous instance state.
         mDrawerLayout.post(new Runnable() {
             @Override
@@ -330,4 +333,5 @@ public class NavigationDrawerFragment extends Fragment {
          */
         void onNavigationDrawerItemSelected(int position);
     }
+
 }

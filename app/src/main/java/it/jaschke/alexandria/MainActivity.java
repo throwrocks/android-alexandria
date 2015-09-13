@@ -42,6 +42,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     public static final String MESSAGE_EVENT = "MESSAGE_EVENT";
     public static final String MESSAGE_KEY = "MESSAGE_EXTRA";
 
+    private DrawerLayout drawerLayout;
+
     private static final String LOG_TAG = "MainActivity";
 
 
@@ -56,7 +58,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             setContentView(R.layout.activity_main);
         }
 
-        messageReciever = new MessageReciever();
+        messageReciever = new MessageReceiver();
         IntentFilter filter = new IntentFilter(MESSAGE_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReciever,filter);
         setUpNavigationDrawer();
@@ -67,13 +69,18 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
      * setUpNavigationDrawer
      */
     private void setUpNavigationDrawer(){
-        navigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        title = getTitle();
+        navigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.navigation_drawer);
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        // Close the drawers if opened. This way if the drawer is opened when you press back,
+        // the drawer is closed for a better experience
+        drawerLayout.closeDrawers();
 
+        title = getTitle();
         // Set up the drawer.
         navigationDrawerFragment.setUp(R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                drawerLayout);
+
     }
 
     /**
@@ -215,7 +222,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     }
 
-    private class MessageReciever extends BroadcastReceiver {
+    private class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getStringExtra(MESSAGE_KEY)!=null){
@@ -243,14 +250,26 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             Log.e(LOG_TAG, "onBackPressed <2?" + true);
             finish();
         }
-        // You can only go back to the list >D
+        // Always go back to the books list
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         sp.edit().putInt(NavigationDrawerFragment.STATE_SELECTED_POSITION, 0).apply();
         sp.edit().putString(NavigationDrawerFragment.STATE_SELECTED_TITLE, NavigationDrawerFragment.drawerTitles[0]).apply();
-        setUpNavigationDrawer();
+        // Restore the action bar
         restoreActionBar();
+        // Reset the navigation drawer
+        setUpNavigationDrawer();
         super.onBackPressed();
 
+    }
+
+    @Override
+    public void onResume(){
+        Log.e(LOG_TAG, "onResume-> " + true);
+        // Reset the navigation drawer
+        setUpNavigationDrawer();
+        // Restore the action bar
+        restoreActionBar();
+        super.onResume();
     }
 
 
