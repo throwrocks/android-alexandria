@@ -235,6 +235,7 @@ public class NavigationDrawerFragment extends Fragment {
         mCurrentSelectedPosition = position;
 
         if (mDrawerListView != null) {
+            // Store the selected position and title to properly display the drawer
             mCurrentSelectedTitle = drawerTitles[position];
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
             sp.edit().putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition).apply();
@@ -302,11 +303,8 @@ public class NavigationDrawerFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+       // Simplified return statement
+        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     /**

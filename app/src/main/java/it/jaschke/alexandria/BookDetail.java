@@ -20,11 +20,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.support.v4.app.DialogFragment;
 
 import com.squareup.picasso.Picasso;
 
 import it.jaschke.alexandria.data.AlexandriaContract;
-import it.jaschke.alexandria.services.BookService;
 
 
 public class BookDetail extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -62,11 +62,23 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
         rootView.findViewById(R.id.delete_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent bookIntent = new Intent(getActivity(), BookService.class);
+
+                DialogFragment sortDialog = new DeleteBookDialog();
+                Bundle args = new Bundle();
+                args.putString("ean", ean);
+                sortDialog.setArguments(args);
+                // Invoke the show method on the sortDialog object
+                sortDialog.show(getFragmentManager(), "delete_book");
+
+                // I disabled this so we can manage the deletion with a dialog fragment.
+                // Just deleting the record didn't seem right, we need a confirmation from the user
+                // to actually delete it.
+
+                /*Intent bookIntent = new Intent(getActivity(), BookService.class);
                 bookIntent.putExtra(BookService.EAN, ean);
                 bookIntent.setAction(BookService.DELETE_BOOK);
                 getActivity().startService(bookIntent);
-                getActivity().getSupportFragmentManager().popBackStack();
+                getActivity().getSupportFragmentManager().popBackStack();*/
             }
         });
         return rootView;
