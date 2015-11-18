@@ -40,7 +40,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     private static final String LOG_TAG = "AddBook";
 
-
     public AddBook(){
 
     }
@@ -206,7 +205,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",", "\n"));
         }
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
-        if(Patterns.WEB_URL.matcher(imgUrl).matches()){
+
+       // Make sure the imgUrl is not null. I'm not sure what the Patterns is for it came from the source code.
+        if( imgUrl != null && Patterns.WEB_URL.matcher(imgUrl).matches()){
 
             ImageView bookCover = (ImageView) rootView.findViewById(R.id.bookCover);
             bookCover.setVisibility(View.VISIBLE);

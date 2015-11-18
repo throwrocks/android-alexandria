@@ -48,9 +48,12 @@ public class BookListAdapter extends CursorAdapter {
         //new DownloadImage(viewHolder.bookCover).execute(imgUrl);
 
         // I implemented Picasso to cache the images so they display when offline
-        ImageView bookCover = viewHolder.bookCover;
-        Picasso.with(context).load(imgUrl).into(bookCover);
 
+        // Make sure the imageUrl is not null before attempting to load with Picasso
+        if ( imgUrl != null ) {
+            ImageView bookCover = viewHolder.bookCover;
+            Picasso.with(context).load(imgUrl).into(bookCover);
+        }
         String bookTitle = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         viewHolder.bookTitle.setText(bookTitle);
 
