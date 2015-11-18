@@ -132,12 +132,18 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
         ((TextView) rootView.findViewById(R.id.fullBookDesc)).setText(desc);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-        String[] authorsArr = authors.split(",");
-        ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
-        ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",","\n"));
+
+        // Check if authors is null before attempting to split array variable
+        if ( authors != null ) {
+            String[] authorsArr = authors.split(",");
+            ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
+            ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",", "\n"));
+        }
+
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
 
-        if(Patterns.WEB_URL.matcher(imgUrl).matches()){
+        // Make sure the imgUrl is not null or not empty
+        if( imgUrl != null && !imgUrl.isEmpty() && Patterns.WEB_URL.matcher(imgUrl).matches()){
 
             // This doesn't work when there is not network connection
             // new DownloadImage((ImageView) rootView.findViewById(R.id.fullBookCover)).execute(imgUrl);

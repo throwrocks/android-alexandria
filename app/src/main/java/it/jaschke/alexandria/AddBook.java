@@ -209,8 +209,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         }
         String imgUrl = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
 
-       // Make sure the imgUrl is not null. I'm not sure what the Patterns is for it came from the source code.
-        if( imgUrl != null && Patterns.WEB_URL.matcher(imgUrl).matches()){
+       // Make sure the imgUrl is not null and not empty. I'm not sure what the Patterns is for it came from the source code.
+        if( imgUrl != null && !imgUrl.isEmpty() && Patterns.WEB_URL.matcher(imgUrl).matches()){
 
             ImageView bookCover = (ImageView) rootView.findViewById(R.id.bookCover);
             bookCover.setVisibility(View.VISIBLE);

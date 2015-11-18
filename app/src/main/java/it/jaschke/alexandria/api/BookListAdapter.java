@@ -50,7 +50,7 @@ public class BookListAdapter extends CursorAdapter {
         // I implemented Picasso to cache the images so they display when offline
 
         // Make sure the imageUrl is not null before attempting to load with Picasso
-        if ( imgUrl != null ) {
+        if ( imgUrl != null && !imgUrl.isEmpty() ) {
             ImageView bookCover = viewHolder.bookCover;
             Picasso.with(context).load(imgUrl).into(bookCover);
         }
